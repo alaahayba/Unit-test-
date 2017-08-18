@@ -528,7 +528,8 @@ in the code also exist unit test for home page UI and app page
 
 _____________________________________________________________________________________________________
 RUN UNIT TEST :
-_________________________________________
+-------------------------------------
+
 to run test cases write npm test 
 
 to run with test coverage  run "ng test --code-coverage"

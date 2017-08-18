@@ -20,6 +20,8 @@ code coverage
 Code coverage is a term used in software testing to describe how much program source code is covered by a testing plan. 
 Developers look at the number of program subroutines and lines of code that are covered by a set of testing resources and techniques.
 Karma can generate code coverage using awesome Istanbul
+
+if you miss to test function or line or branch karma coverage will mark it also it produce percentage for code coverage with unit test.
 ______________________________________________________________________________________________________________________________
 
 ****notice that we used Karma for run tests and determine code coverage But jasmine is used for writ code of unit test.****
@@ -63,6 +65,7 @@ npm install angular-cli --save-dev && npm install codecov --save-dev && npm inst
  _________________________________________________________________________________________________
  
 karma.conf.js 
+
 *********************************************************************************************************
 module.exports = function (config) {
  config.set({
@@ -110,6 +113,7 @@ module.exports = function (config) {
 **************************************************************************************************************
 
 4-Now, create a new file in your root folder “angular-cli.json” and copy the following code:
+
 ------------------------------------------------------------------------------------------------------------
 angular-cli.json
 ***********************************************************************************************************
@@ -177,6 +181,7 @@ environment.prod.ts
 export const environment: any = {
   production: true,
 };
+
 ----------------------------------------------------------
 
 then Create a file at src/environment/environment.ts and add the following:
@@ -184,3 +189,347 @@ then Create a file at src/environment/environment.ts and add the following:
 export const environment: any = {
   production: false,
 };
+____________________________________________________________________________________________________________________________________
+
+6- in your “src/” folder, create a new file “mocks.ts” and copy the following code:
+
+------------------------------------------------------------------------------------------------
+******************************************************************************************************
+mocks.ts
+
+export class ConfigMock {
+ public get(): any {
+   return '';
+ }
+ public getBoolean(): boolean {
+   return true;
+ }
+ public getNumber(): number {
+   return 1;
+ }
+}
+export class FormMock {
+ public register(): any {
+   return true;
+ }
+}
+export class NavMock {
+ public pop(): any {
+   return new Promise(function(resolve: Function): void {
+     resolve();
+   });
+ }
+ public push(): any {
+   return new Promise(function(resolve: Function): void {
+     resolve();
+   });
+ }
+ public getActive(): any {
+   return {
+     'instance': {
+       'model': 'something',
+     },
+   };
+ }
+ public setRoot(): any {
+   return true;
+ }
+}
+export class PlatformMock {
+ public ready(): any {
+   return new Promise((resolve: Function) => {
+     resolve();
+   });
+ }
+}
+export class MenuMock {
+ public close(): any {
+   return new Promise((resolve: Function) => {
+     resolve();
+   });
+ }
+}
+
+****************************************************************************************************************
+_______________________________________________________________________________________________________________________________
+
+7 - Now, in the same folder, create a new file “polyfills.ts” and copy the following content:
+
+polyfills.ts
+
+ 
+
+import 'core-js/es6/symbol';
+import 'core-js/es6/object';
+import 'core-js/es6/function';
+import 'core-js/es6/parse-int';
+import 'core-js/es6/parse-float';
+import 'core-js/es6/number';
+import 'core-js/es6/math';
+import 'core-js/es6/string';
+import 'core-js/es6/date';
+import 'core-js/es6/array';
+import 'core-js/es6/regexp';
+import 'core-js/es6/map';
+import 'core-js/es6/set';
+import 'core-js/es6/reflect';
+import 'core-js/es7/reflect';
+import 'zone.js/dist/zone';
+
+_______________________________________________________________________________________________________________
+
+
+8 - Now, create a new file “test.ts” and copy the following code:
+
+test.ts
+
+********************************************************
+
+import './polyfills.ts';
+import 'zone.js/dist/long-stack-trace-zone';
+import 'zone.js/dist/proxy.js';
+import 'zone.js/dist/sync-test';
+import 'zone.js/dist/jasmine-patch';
+import 'zone.js/dist/async-test';
+import 'zone.js/dist/fake-async-test';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { getTestBed, TestBed } from '@angular/core/testing';
+import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from '@angular/platform-browser-dynamic/testing';
+import { App, Config, Form, IonicModule, Keyboard, DomController, MenuController, NavController, Platform } from 'ionic-angular';
+import { ConfigMock } from './mocks';
+declare var __karma__: any;
+declare var require: any;
+__karma__.loaded = function (): void {
+
+};
+getTestBed().initTestEnvironment(
+ BrowserDynamicTestingModule,
+ platformBrowserDynamicTesting(),
+);
+let context: any = require.context('./', true, /\.spec\.ts/); // path of all tests file (testfilename.spec.ts)
+context.keys().map(context);
+__karma__.start();
+
+_____________________________________________________________________________________________________________________________
+
+9 - In your “src/” directory, create a new file “tsconfig.test.json” and copy the following code:
+
+tsconfig.test.json
+
+**************************************************
+
+{
+ "compilerOptions": {
+   "baseUrl": "",
+   "declaration": false,
+   "emitDecoratorMetadata": true,
+   "experimentalDecorators": true,
+   "lib": ["es6", "dom"],
+   "mapRoot": "./",
+   "module": "es6",
+   "moduleResolution": "node",
+   "outDir": "../dist/out-tsc",
+   "sourceMap": true,
+   "target": "es5",
+   "typeRoots": [
+     "../node_modules/@types"
+   ]
+ }
+}
+
+***********************************************************************************************
+
+n the “scripts” array of your “package.json”, add the following line:
+
+"test": "ng test"
+
+_________________________________________________________________________________________________
+
+now jasmine and Karma are installed .
+
+
+now you can write your test suits
+
+____________________________________________________________________________________________________________
+
+In your “src/providers” folder, open “number-generator.ts” and copy the following content:
+
+number-generator.ts
+
+
+import { Injectable } from '@angular/core';
+//import { Http } from '@angular/http';
+import 'rxjs/add/operator/map';
+
+/*
+  Generated class for the NumberGeneratorProvider provider.
+
+  See https://angular.io/docs/ts/latest/guide/dependency-injection.html
+  for more info on providers and Angular DI.
+*/
+@Injectable()
+export class NumberGeneratorProvider {
+
+  constructor() {
+    console.log('Hello NumberGeneratorProvider Provider');
+  }
+
+  hello(name) {
+    return "hello :" + name + '.';
+  }
+  getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
+
+  add(x: number, y: number): number {
+    let res: number = x + y;
+    return res;
+  }
+
+  is_odd(x: number) {
+    if (x % 2 === 1)
+      return true;
+
+    return false;
+  }
+ /* iszero(x) {
+    if (x = 0)
+      return true;
+  }*/
+
+}
+
+-----------------------------------------------------------------------------------------
+
+then write unittest file it is name -->  number-generator.spec.ts
+
+
+
+console.log("number generator test");
+
+import { NumberGeneratorProvider } from './number-generator';
+import {} from 'jasmine';
+
+
+
+let numberGenerator = null;
+
+describe('Number Generator Service', () => {
+
+   beforeEach(() => {
+       numberGenerator = new NumberGeneratorProvider();
+   });
+
+   it('1-should say hello', () => {
+           
+           let result = numberGenerator.hello("alaa");
+           expect(result).toContain("alaa");
+       }
+   );
+   
+
+   it('2- should return a random number', () => {
+           
+           let result = numberGenerator.getRandomInt(5,10);
+            expect(result).toBeGreaterThan(4);
+       }
+   );
+
+    it('3- should return sum of 2 numbers', () => {
+           
+           let result = numberGenerator.add(3,4);
+           expect(result).toBe(7);
+       }
+   );
+
+      it('4-should return true if number is odd', () => {
+           
+           let result = numberGenerator.is_odd(5);
+           expect(result).toBe(true);
+
+           result=numberGenerator.is_odd(8);
+           expect(result).toBe(false);
+
+           result=numberGenerator.is_odd('8');
+           expect(result).toBe(false);
+       }
+   );
+
+   it('test char', () => {
+          
+           let result=numberGenerator.add('5','9')
+        
+           expect(result).toBe(20);
+       }
+   );
+
+});
+xdescribe("NumberGeneratorProvider", ()=> {
+    var calc;
+ 
+    beforeEach(function() {
+        calc = new NumberGeneratorProvider();
+        spyOn(calc, 'getRandomInt');
+    });
+ 
+    xdescribe("when getRandomInt is used to peform basic math operations", function(){
+         
+        //Test for sum operation
+        it("should be able to calculate sum of 3,5  ", function() {
+            //call any method
+            calc.getRandomInt();
+            //verify it got executed
+            expect(calc.getRandomInt).toHaveBeenCalled();
+            expect(calc.getRandomInt).toHaveBeenCalledWith();
+        });
+         
+           it("should be able to calculate sum of 3 and -", function() {
+        
+             calc.getRandomInt(3);
+            //verify it got executed
+            expect(calc.getRandomInt).toHaveBeenCalled();
+            expect(calc.getRandomInt).toHaveBeenCalledWith(3);
+        });
+
+          it("should be able to calculate sum of '3' and '5' charachters", function() {
+        
+             calc.getRandomInt('3','5');
+            //verify it got executed
+            expect(calc.getRandomInt).toHaveBeenCalled();
+            expect(calc.getRandomInt).toHaveBeenCalledWith('3','5');
+        });
+          it("should be able to calculate sum of - ,-", function() {
+        
+             calc.getRandomInt();
+            //verify it got executed
+            expect(calc.getRandomInt).toHaveBeenCalled();
+            expect(calc.getRandomInt).toHaveBeenCalledWith();
+        });
+ 
+ 
+ 
+    });
+});
+
+***************************************************************************************************************************
+explain unit test code 
+
+describe() defines a suite of tests (or “specs”).
+
+it() defines a test or “spec” (it should do that).
+
+expect() defines the expected result of a test
+
+and Matcher -> toBe , isGreaterThan ,.........
+
+to make compiler skip test case but before describe ->x also for it
+
+in the code also exist unit test for home page UI and app page 
+
+_____________________________________________________________________________________________________
+
+to run test cases write npm test 
+
+to run with test coverage  run "ng test --code-coverage"
+that will create folder coverage in it you will find index.html that will contain  test coverage percentage for each
+line ,branch ,function and statement
